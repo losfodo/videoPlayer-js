@@ -1,0 +1,296 @@
+*, *::before, *::after {
+  box-sizing: border-box;/*nao mudou muito*/
+}
+
+body {
+  margin: 0;
+}
+
+.video-container {/*div q cobre todo o container do video*/
+  position: relative;/*para aparecer os botoes de video */
+  width: 90%;
+  max-width: 1000px;/*diminui um pouco o padrão é maior*/
+  display: flex;
+  justify-content: center;
+  margin-inline: auto;/*em linha usando center centraliza o video*/
+  background-color: black;/*fundo preto para chegando no limite do video mostrar apenas o preto fica mais bonito*/
+}
+
+.video-container.theater,
+.video-container.full-screen {
+  max-width: initial;/*Initial denota o valor inicial da propriedade*/
+  width: 100%;/*Initial para 100 dessa largura*/
+}
+
+.video-container.theater {
+  max-height: 90vh;/*altura maxima da tela média teatro modo*/
+}
+
+.video-container.full-screen {
+  max-height: 100vh;/*para tela cheia coloca no maximo a altura*/
+}
+
+video {
+  width: 100%;
+}
+
+.video-controls-container {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  color: white;
+  z-index: 100;
+  opacity: 0;
+  transition: opacity 150ms ease-in-out;
+}
+
+.video-controls-container::before {/*aparecer e desaparecer os controles de video*/
+  content: "";
+  position: absolute;
+  bottom: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, .75), transparent);/*preto com transparencia nos controles ao passar o mouse*/
+  width: 100%;/*manter o mesmo tamanho do formato videos*/
+  aspect-ratio: 6 / 1;/*nao importa o tamanho do formato do video os controles terão sempre mesmo tamanho*/
+  z-index: -1;/*coloca atras de todos os botoes*/
+  pointer-events: none;/*desliga os pontos de eventos de click.. ao clicar na tela de video toda pausar e dar play de acordo*/
+}
+
+.video-container:hover .video-controls-container,
+.video-container:focus-within .video-controls-container,
+.video-container.paused .video-controls-container {
+  opacity: 0.5;/*deixa visivel os controles abaixo mas com opacidade para visualização dos controles e atraves*/
+}
+
+.video-controls-container .controls {
+  display: flex;
+  gap: .3rem;/*espassamento entre os controles, passando de 5rem nao mostra o tempo total de video*/
+  padding: .25rem;
+  align-items: center;
+}
+
+.video-controls-container .controls button {
+  background: none;
+  border: none;
+  color: inherit;/*cor mais esbranqeçada*/
+  padding: 0;
+  height: 30px;
+  width: 30px;
+  font-size: 1.1rem;
+  cursor: pointer;/*muda o ponteiro ao passar o mouse*/
+  opacity: .85;
+  transition: opacity 150ms ease-in-out;
+}
+
+.video-controls-container .controls button:hover {
+  opacity: 1;/*ao passar o mouse clareia os botoes um pouco*/
+}
+
+.video-container.paused .pause-icon {
+  display: none;
+}
+
+.video-container:not(.paused) .play-icon {/*da o efeito de svg play para svg de pause ao clicar : not (seletor) corresponde a cada elemento que NÃO é o elemento/seletor especificado.*/
+  display: none;/*elemento pause ocupa lugar do elemento play ao clicar pois none retira o elemento*/
+}
+
+.video-container.theater .tall {/*mini retangulo do teatro icone da tela menor*/
+  display: none;
+}
+
+.video-container:not(.theater) .wide {/*retangulo da tela maior alternado um com outro*/
+  display: none;
+}
+
+.video-container.full-screen .open {
+  display: none;
+}
+
+.video-container:not(.full-screen) .close {
+  display: none;
+}
+
+.volume-high-icon,
+.volume-low-icon,
+.volume-muted-icon {
+  display: none;/*todos os volumes mantem oculto*/
+}
+
+.video-container[data-volume-level="high"] .volume-high-icon {/*div q cobre tudo volume maximo no class com icone volume maximo  */
+  display: block;/*Um bloco contém um espaço em branco tanto em cima como embaixo e não permite outros elementos HTML ao lado, exceto quando tiver sido declarado ao contrário*/
+}
+
+.video-container[data-volume-level="low"] .volume-low-icon {
+  display: block;
+}
+
+.video-container[data-volume-level="muted"] .volume-muted-icon {
+  display: block;
+}
+
+.volume-container {
+  display: flex;
+  align-items: center;
+}
+
+.volume-slider {
+  width: 0;
+  transform-origin: left;
+  transform: scaleX(0);
+  transition: width 150ms ease-in-out, transform 150ms ease-in-out;/*ao abrir a barra de volume passando o mouse*/
+}
+
+.volume-container:hover .volume-slider,/*ao passar o mouse..*/
+.volume-slider:focus-within {/* pseudoclasse : focus - dentro do CSS corresponde a um elemento se o elemento ou qualquer um de seus descendentes estiver em foco.*/
+  width: 100px;/*largura do volume apenas*/
+  transform: scaleX(1);/*ponto deslizante mostrado*/
+} 
+
+.duration-container {
+  display: flex;
+  align-items: center;
+  gap: .25rem;
+  flex-grow: 1;
+}
+
+.video-container.captions .captions-btn {
+  border-bottom: 3px solid red;
+}
+
+.video-controls-container .controls button.wide-btn {
+  width: 50px;/*da um espaçamento pequeno entre botoes tradutor e vezes*/
+}
+
+.timeline-container {/*linha de video*/
+  height: 7px;
+  margin-inline: .5rem;
+  cursor: pointer;/*ao passar o mouse muda o ponteiro*/
+  display: flex;
+  align-items: center;
+}
+
+.timeline {
+  background-color: rgba(100, 100, 100, .5);/*barra de andanmento do video cor de fundo*/
+  height: 3px;/*altura dessa barra*/
+  width: 100%;
+  position: relative
+}
+
+.timeline::before {/*antes*/
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  right: calc(100% - var(--preview-position) * 100%);/*100 % menos progresso previo e multiplica 100*/
+  background-color: rgb(150, 150, 150);
+  display: none;
+}
+
+.timeline::after {/*depois*/
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  right: calc(100% - var(--progress-position) * 100%);
+  background-color: red;
+}
+
+.timeline .thumb-indicator {
+  --scale: 0;/*quando mostra o preview passando o mouse da um efeito de dentro pra fora aparecendo */
+  position: absolute;
+  transform: translateX(-50%) scale(var(--scale));/*a transação de 50% margem onde se mantem a previwe*/
+  height: 200%;
+  top: -50%;
+  left: calc(var(--progress-position) * 100%);
+  background-color: red;
+  border-radius: 50%;
+  transition: transform 150ms ease-in-out;
+  aspect-ratio: 1 / 1;/*indica a proporção*/
+}
+
+.timeline .preview-img {
+  position: absolute;
+  height: 80px;
+  aspect-ratio: 16 / 9;
+  top: -1rem;
+  transform: translate(-50%, -100%);
+  left: calc(var(--preview-position) * 100%);
+  border-radius: .25rem;
+  border: 2px solid white;
+  display: none;
+}
+
+.thumbnail-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  display: none;
+}
+
+.video-container.scrubbing .thumbnail-img {
+  display: block;
+}
+
+.video-container.scrubbing .preview-img,
+.timeline-container:hover .preview-img {
+  display: block;
+}
+
+.video-container.scrubbing .timeline::before,
+.timeline-container:hover .timeline::before {
+  display: block;/*variar de imagem para imagem de preview ao vagar com o mouse*/
+}
+
+.video-container.scrubbing .thumb-indicator,
+.timeline-container:hover .thumb-indicator {
+  --scale: 1;
+}
+
+.video-container.scrubbing .timeline,
+.timeline-container:hover .timeline {
+  height: 100%;/*ao passar o mouse a altura almenta oq é 3 pixel em 100porcento maior*/
+}
+
+/* .controls button[data-state="subtitles"] {
+  height: 85%;
+  text-indent: 0;
+  font-size: 16px;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #666;
+  background: #000;
+  border-radius: 2px;
+}
+
+.subtitles-menu {
+  display: none;
+  position: absolute;
+  bottom: 14.8%;
+  right: 20px;
+  background: #666;
+  list-style-type: none;
+  margin: 0;
+  width: 100px;
+  padding: 10px;
+}
+
+.subtitles-menu li {
+  padding: 0;
+  text-align: center;
+}
+
+.subtitles-menu li button {
+  border: none;
+  background: #000;
+  color: #fff;
+  cursor: pointer;
+  width: 90%;
+  padding: 2px 5px;
+  border-radius: 2px;
+} */
