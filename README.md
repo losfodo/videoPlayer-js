@@ -1,5 +1,5 @@
 # videoPlayer-js
 
 <div align="center" >
-  <img src="./assets/previewImgs/preview2.jpg">
+  <img src="./videoPlayer-js/assets/videoPlayer-js/preview2.jpg">
 </div>
